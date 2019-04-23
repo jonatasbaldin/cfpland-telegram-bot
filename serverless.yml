@@ -1,0 +1,48 @@
+service: cfpland-telegram-bot
+
+provider:
+  name: aws
+  runtime: python3.7
+  environment: 
+    DATABASE_URL: ${file(.serverless.env.yml):DATABASE_URL}
+    CFPLAND_FEED_URL: ${file(.serverless.env.yml):CFPLAND_FEED_URL, 'https://feeds.cfpland.com/v2/rss/cfps'}
+    TELEGRAM_TOKEN: ${file(.serverless.env.yml):TELEGRAM_TOKEN}
+    TELEGRAM_CFPLAND_CHANNEL: ${file(.serverless.env.yml):TELEGRAM_CFPLAND_CHANNEL}
+  vpc:
+    securityGroupIds:
+      - sg-06ea07fa15e7613da
+    subnetIds:
+      - subnet-01595a21721d05a66
+      - subnet-084fdc5a9a5fa3126
+      - subnet-0e537c2e076614089
+
+functions:
+  parse: 
+    handler: main.parse
+    timeout: 30
+    events:
+      - schedule: cron(0 10 * * ? *)
+
+  telegram_bot:
+    handler: main.telegram_bot
+    timeout: 30
+    events:
+      - http:
+          path: /telegram_bot
+          method: post
+
+  send_telegram_messages_to_channel:
+    handler: main.send_telegram_messages_to_channel
+    timeout: 60
+    events:
+      - schedule: cron(0 11 * * ? *)
+
+  set_telegram_webhook:
+    handler: main.set_telegram_webhook
+
+plugins:
+  - serverless-python-requirements
+
+custom:
+  pythonRequirements:
+    dockerizePip: 'non-linux'

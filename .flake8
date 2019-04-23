@@ -1,0 +1,4 @@
+[flake8]
+ignore = F405,I201,I100
+exclude = .git,__pycache__,venv,.serverless,node_modules
+max-line-length = 100
