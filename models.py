@@ -2,7 +2,6 @@ from datetime import datetime
 
 from loguru import logger
 from peewee import *  # noqa: F403
-from playhouse.migrate import *  # noqa: F403
 import pw_database_url
 
 from constants import DATABASE_URL
