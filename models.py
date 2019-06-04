@@ -1,8 +1,8 @@
-import calendar
 from datetime import datetime
 
 from loguru import logger
 from peewee import *  # noqa: F403
+from playhouse.migrate import *  # noqa: F403
 import pw_database_url
 
 from constants import DATABASE_URL
@@ -30,7 +30,6 @@ class CFP(Model):
     description = CharField(max_length=1024)
     link = CharField(max_length=1024)
     category = CharField()
-    published_at = DateTimeField()
     event_start_date = DateField()
     cfp_end_date = DateField()
     location = CharField()
@@ -71,7 +70,7 @@ class CFP(Model):
             cls
             .select()
             .where(cls.cfp_end_date >= today)
-            .order_by(cls.published_at.desc())
+            .order_by(cls.cfp_end_date.desc())
             .limit(10)
         )[::-1]
 
@@ -84,21 +83,8 @@ class CFP(Model):
             .select()
             .where(fn.Lower(cls.category) == category)
             .where(cls.cfp_end_date >= today)
-            .order_by(cls.published_at.desc())
+            .order_by(cls.cfp_end_date.desc())
             .limit(10)
-        )[::-1]
-
-    @classmethod
-    def get_this_month(cls):
-        month = datetime.now().date().replace(day=1)
-        last_day = calendar.monthrange(month.year, month.month)[1]
-        end_of_month = month.replace(day=last_day)
-
-        return (
-            cls
-            .select()
-            .where(cls.cfp_end_date.between(month, end_of_month))
-            .order_by(cls.published_at.desc())
         )[::-1]
 
     @classmethod

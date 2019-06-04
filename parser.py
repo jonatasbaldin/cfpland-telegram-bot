@@ -1,53 +1,26 @@
-from datetime import datetime
-from time import mktime
+import requests
 
-import feedparser
-
-from exceptions import ParserEmptyData
-from constants import CFPLAND_FEED_URL
+from constants import CFPLAND_URL
 
 
-class FeedParser:
-    def __init__(self, content=CFPLAND_FEED_URL):
-        self.content = content
-
+class Parser:
     def get_cfps(self):
-        parsed_feed = feedparser.parse(self.content)
-        items = parsed_feed.get('items')
-
-        if not items:
-            raise ParserEmptyData()
+        cfps = requests.get(CFPLAND_URL).json().get('items')
 
         data = []
 
-        for item in items:
-            if self.is_bad_cfp(item):
-                continue
-
-            published_at = datetime.fromtimestamp(mktime(item.get('published_parsed')))
+        for item in cfps:
             cfp = {
-                'title': item.get('title'),
-                'description': item.get('description'),
-                'link': item.get('link'),
+                'title': item.get('name'),
+                'description': item.get('description', ''),
+                'link': item.get('cfp_url'),
                 'category': item.get('category'),
-                'published_at': published_at,
-                'event_start_date': item.get('eventstartdate'),
-                'cfp_end_date': item.get('cfpenddate'),
+                'event_start_date': item.get('event_start_date'),
+                'cfp_end_date': item.get('cfp_due_date'),
                 'location': item.get('location'),
-                'perk_list': item.get('perkslist'),
+                'perk_list': item.get('perks_list'),
             }
 
             data.append(cfp)
 
         return data
-
-    def is_bad_cfp(self, item):
-        """
-        Ignore CFPs with known issues.
-        """
-
-        # TECHSPO Toronto has no link field
-        if item.get('title') == 'TECHSPO Toronto':
-            return True
-
-        return

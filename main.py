@@ -5,14 +5,14 @@ from loguru import logger
 from bot import TelegramBot, bot
 from constants import TELEGRAM_CFPLAND_CHANNEL
 from models import CFP, DB
-from parser import FeedParser
+from parser import Parser
 
 
 DB.init()
 
 
 def parse(event, context):
-    parser = FeedParser()
+    parser = Parser()
     cfps = parser.get_cfps()
     CFP.create_if_needed(cfps)
 
@@ -57,14 +57,6 @@ def telegram_bot(event, context):
                 bot.send_message(bot.chat_id, message)
                 logger.info(
                     f'/latest command executed by chat_id: {bot.chat_id} with message: {message}'
-                )
-
-        if bot.message_received == '/thismonth':
-            for cfp in CFP.get_this_month():
-                message = bot.format_cfp(cfp)
-                bot.send_message(bot.chat_id, message)
-                logger.info(
-                    f'/thismonth command executed by chat_id: {bot.chat_id} with message: {message}'
                 )
 
         if bot.message_received == '/categories':

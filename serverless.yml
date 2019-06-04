@@ -2,10 +2,11 @@ service: cfpland-telegram-bot
 
 provider:
   name: aws
+  region: eu-west-1
   runtime: python3.7
   environment: 
     DATABASE_URL: ${file(.serverless.env.yml):DATABASE_URL}
-    CFPLAND_FEED_URL: ${file(.serverless.env.yml):CFPLAND_FEED_URL, 'https://feeds.cfpland.com/v2/rss/cfps'}
+    CFPLAND_URL: ${file(.serverless.env.yml):CFPLAND_URL, 'https://api.cfpland.com/v0/conferences'}
     TELEGRAM_TOKEN: ${file(.serverless.env.yml):TELEGRAM_TOKEN}
     TELEGRAM_CFPLAND_CHANNEL: ${file(.serverless.env.yml):TELEGRAM_CFPLAND_CHANNEL}
   vpc:
