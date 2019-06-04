@@ -129,3 +129,4 @@ dmypy.json
 .serverless.env.yml
 node_modules
 cfpland.db
+.env.development

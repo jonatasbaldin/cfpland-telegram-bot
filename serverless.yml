@@ -5,10 +5,9 @@ provider:
   region: eu-west-1
   runtime: python3.7
   environment: 
-    DATABASE_URL: ${file(.serverless.env.yml):DATABASE_URL}
-    CFPLAND_URL: ${file(.serverless.env.yml):CFPLAND_URL, 'https://api.cfpland.com/v0/conferences'}
-    TELEGRAM_TOKEN: ${file(.serverless.env.yml):TELEGRAM_TOKEN}
-    TELEGRAM_CFPLAND_CHANNEL: ${file(.serverless.env.yml):TELEGRAM_CFPLAND_CHANNEL}
+    DATABASE_URL: ${env:DATABASE_URL}
+    TELEGRAM_TOKEN: ${env:TELEGRAM_TOKEN}
+    TELEGRAM_CFPLAND_CHANNEL: ${env:TELEGRAM_CFPLAND_CHANNEL}
   vpc:
     securityGroupIds:
       - sg-06ea07fa15e7613da
@@ -43,6 +42,7 @@ functions:
 
 plugins:
   - serverless-python-requirements
+  - serverless-dotenv-plugin
 
 custom:
   pythonRequirements:
