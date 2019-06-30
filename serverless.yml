@@ -9,13 +9,6 @@ provider:
     TELEGRAM_TOKEN: ${env:TELEGRAM_TOKEN}
     TELEGRAM_CFPLAND_CHANNEL: ${env:TELEGRAM_CFPLAND_CHANNEL}
     ENVIRONMENT: ${env:ENVIRONMENT}
-  vpc:
-    securityGroupIds:
-      - sg-06ea07fa15e7613da
-    subnetIds:
-      - subnet-01595a21721d05a66
-      - subnet-084fdc5a9a5fa3126
-      - subnet-0e537c2e076614089
 
 functions:
   parse: 
@@ -23,6 +16,13 @@ functions:
     timeout: 30
     events:
       - schedule: cron(0 10 * * ? *)
+    vpc:
+    securityGroupIds:
+      - sg-06ea07fa15e7613da
+    subnetIds:
+      - subnet-01595a21721d05a66
+      - subnet-084fdc5a9a5fa3126
+      - subnet-0e537c2e076614089
 
   telegram_bot:
     handler: main.telegram_bot
@@ -31,12 +31,26 @@ functions:
       - http:
           path: /telegram_bot
           method: post
+    vpc:
+      securityGroupIds:
+        - sg-06ea07fa15e7613da
+      subnetIds:
+        - subnet-01595a21721d05a66
+        - subnet-084fdc5a9a5fa3126
+        - subnet-0e537c2e076614089
 
   send_telegram_messages_to_channel:
     handler: main.send_telegram_messages_to_channel
     timeout: 60
     events:
       - schedule: cron(0 11 * * ? *)
+    vpc:
+      securityGroupIds:
+        - sg-06ea07fa15e7613da
+      subnetIds:
+        - subnet-01595a21721d05a66
+        - subnet-084fdc5a9a5fa3126
+        - subnet-0e537c2e076614089
 
   set_telegram_webhook:
     handler: main.set_telegram_webhook
