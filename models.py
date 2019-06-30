@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from loguru import logger
+from logger import logger
 from peewee import *  # noqa: F403
 import pw_database_url
 
@@ -52,14 +52,25 @@ class CFP(Model):
                 cfp_end_date = datetime.strptime(cfp_end_date, date_pattern).date()
                 event_start_date = datetime.strptime(event_start_date, date_pattern).date()
             except ValueError as exception:
-                logger.error(f'could not formate dates for CFP: {title}, error: {exception}')
+                logger.exception({
+                    'description': 'could not formate dates for CFP',
+                    'cfp_title': title,
+                    'exception': exception,
+                }, exc_info=True)
 
             try:
                 cfp, created = cls.get_or_create(title=title, defaults=cfp)
                 if created:
-                    logger.info(f'created CFP: {title}')
+                    logger.info({
+                        'description': 'created CFP',
+                        'cfp_title': title,
+                    })
             except IntegrityError as exception:
-                logger.error(f'could not create CFP: {title}, error: {exception}')
+                logger.exception({
+                    'description': 'could not create CFP',
+                    'cfp_title': title,
+                    'exception': exception,
+                }, exc_info=True)
 
     @classmethod
     def get_latest(cls):

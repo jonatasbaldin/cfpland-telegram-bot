@@ -8,6 +8,7 @@ provider:
     DATABASE_URL: ${env:DATABASE_URL}
     TELEGRAM_TOKEN: ${env:TELEGRAM_TOKEN}
     TELEGRAM_CFPLAND_CHANNEL: ${env:TELEGRAM_CFPLAND_CHANNEL}
+    ENVIRONMENT: ${env:ENVIRONMENT}
   vpc:
     securityGroupIds:
       - sg-06ea07fa15e7613da
