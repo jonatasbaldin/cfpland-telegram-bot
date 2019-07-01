@@ -2,7 +2,7 @@ import json
 
 import telegram
 
-from constants import TELEGRAM_TOKEN
+from ..constants import TELEGRAM_TOKEN
 
 
 START_MESSAGE = """
@@ -62,7 +62,6 @@ class TelegramBot:
     def set_webhook(self, url):
         return self.bot.set_webhook(url)
 
-    @classmethod
     def ok_response(self):
         return {
             'statusCode': 200,
@@ -70,7 +69,6 @@ class TelegramBot:
             'body': json.dumps('ok')
         }
 
-    @classmethod
     def error_response(self, body='something went wrong'):
         return {
             'statusCode': 400,

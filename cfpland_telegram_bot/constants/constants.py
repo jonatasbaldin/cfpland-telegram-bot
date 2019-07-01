@@ -1,5 +1,7 @@
 from os import environ
-from exceptions import MissingEnvironmentVariable
+
+from ..exceptions import MissingEnvironmentVariable
+
 
 DATABASE_URL = environ.get('DATABASE_URL')
 CFPLAND_URL = 'https://api.cfpland.com/v0/conferences'

@@ -1,10 +1,10 @@
 from datetime import datetime
 
-from logger import logger
 from peewee import *  # noqa: F403
 import pw_database_url
 
-from constants import DATABASE_URL
+from ..constants import DATABASE_URL
+from ..logger import logger
 
 
 DB_PARAMS = pw_database_url.parse(DATABASE_URL)

@@ -1,19 +1,12 @@
 import re
 
-from bot import TelegramBot, bot
-from constants import TELEGRAM_CFPLAND_CHANNEL
-from logger import logger
-from models import CFP, DB
-from parser import Parser
+from .bot import bot
+from ..constants import TELEGRAM_CFPLAND_CHANNEL
+from ..logger import logger
+from ..models import CFP, DB
 
 
 DB.init()
-
-
-def parse(event, context):
-    parser = Parser()
-    cfps = parser.get_cfps()
-    CFP.create_if_needed(cfps)
 
 
 def telegram_bot(event, context):
@@ -72,9 +65,9 @@ def telegram_bot(event, context):
                 'chat_id': bot.chat_id,
             })
 
-        return TelegramBot.ok_response()
+        return bot.ok_response()
 
-    return TelegramBot.error_response()
+    return bot.error_response()
 
 
 def send_telegram_messages_to_channel(event, context):
@@ -87,7 +80,7 @@ def send_telegram_messages_to_channel(event, context):
         cfp.sent_on_telegram()
 
         lambda_logger.info({
-            'description': 'sent new CFP',
+            'description': 'sent new CFP to telegram channel',
             'cfp_title': cfp.title,
             'chat_id': TELEGRAM_CFPLAND_CHANNEL,
         })
@@ -97,6 +90,6 @@ def set_telegram_webhook(event, context):
     webhook = bot.set_webhook(event)
 
     if webhook:
-        return TelegramBot.ok_response()
+        return bot.ok_response()
 
-    return TelegramBot.error_response()
+    return bot.error_response()

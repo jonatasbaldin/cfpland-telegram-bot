@@ -12,20 +12,20 @@ provider:
 
 functions:
   parse: 
-    handler: main.parse
+    handler: cfpland_telegram_bot.parser.main.parse
     timeout: 30
     events:
       - schedule: cron(0 10 * * ? *)
     vpc:
-    securityGroupIds:
-      - sg-06ea07fa15e7613da
-    subnetIds:
-      - subnet-01595a21721d05a66
-      - subnet-084fdc5a9a5fa3126
-      - subnet-0e537c2e076614089
+      securityGroupIds:
+        - sg-06ea07fa15e7613da
+      subnetIds:
+        - subnet-01595a21721d05a66
+        - subnet-084fdc5a9a5fa3126
+        - subnet-0e537c2e076614089
 
   telegram_bot:
-    handler: main.telegram_bot
+    handler: cfpland_telegram_bot.bot.main.telegram_bot
     timeout: 30
     events:
       - http:
@@ -40,7 +40,7 @@ functions:
         - subnet-0e537c2e076614089
 
   send_telegram_messages_to_channel:
-    handler: main.send_telegram_messages_to_channel
+    handler: cfpland_telegram_bot.bot.main.send_telegram_messages_to_channel
     timeout: 60
     events:
       - schedule: cron(0 11 * * ? *)
@@ -53,11 +53,24 @@ functions:
         - subnet-0e537c2e076614089
 
   set_telegram_webhook:
-    handler: main.set_telegram_webhook
+    handler: cfpland_telegram_bot.bot.main.set_telegram_webhook
+
+  send_metrics:
+    handler: cfpland_telegram_bot/metrics.main.send_metrics
+    events:
+      - cloudwatchLog: '/aws/lambda/cfpland-telegram-bot-dev-parse'
+      - cloudwatchLog: '/aws/lambda/cfpland-telegram-bot-dev-send_telegram_messages_to_channel'
+    iamRoleStatements:
+      - Effect: "Allow"
+        Action:
+          - 'cloudwatch:PutMetricData'
+        # TODO: add specific resource
+        Resource: '*'
 
 plugins:
   - serverless-python-requirements
   - serverless-dotenv-plugin
+  - serverless-iam-roles-per-function
 
 custom:
   pythonRequirements:

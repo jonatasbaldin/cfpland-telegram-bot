@@ -1,6 +1,6 @@
 import requests
 
-from constants import CFPLAND_URL
+from ..constants import CFPLAND_URL
 
 
 class Parser:
