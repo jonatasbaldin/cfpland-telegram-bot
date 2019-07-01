@@ -56,7 +56,7 @@ functions:
     handler: cfpland_telegram_bot.bot.main.set_telegram_webhook
 
   send_metrics:
-    handler: cfpland_telegram_bot/metrics.main.send_metrics
+    handler: cfpland_telegram_bot.metrics.main.send_metrics
     events:
       - cloudwatchLog: '/aws/lambda/cfpland-telegram-bot-dev-parse'
       - cloudwatchLog: '/aws/lambda/cfpland-telegram-bot-dev-send_telegram_messages_to_channel'
