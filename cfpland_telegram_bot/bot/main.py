@@ -1,7 +1,7 @@
 import re
 
 from .bot import bot
-from ..constants import TELEGRAM_CFPLAND_CHANNEL
+from ..constants import SENT_TO_TELEGRAM_CHANNEL, TELEGRAM_CFPLAND_CHANNEL
 from ..logger import logger
 from ..models import CFP, DB
 
@@ -16,12 +16,13 @@ def telegram_bot(event, context):
     if event.get('httpMethod') == 'POST' and body:
         bot.update(body)
 
+        lambda_logger.info({
+            'message_received': bot.message_received,
+            'chat_id': bot.chat_id,
+        })
+
         if bot.message_received == '/start':
             bot.send_start_message(bot.chat_id)
-            lambda_logger.info({
-                'command': '/start',
-                'chat_id': bot.chat_id,
-            })
 
         latest_category_match = re.search(r'^(/latest) (\w+)$', bot.message_received)
         if latest_category_match:
@@ -39,20 +40,10 @@ def telegram_bot(event, context):
                 )
                 bot.send_message(bot.chat_id, message)
 
-            lambda_logger.info({
-                'command': '/latest <category>',
-                'category': category,
-                'chat_id': bot.chat_id,
-            })
-
         if bot.message_received == '/latest':
             for cfp in CFP.get_latest():
                 message = bot.format_cfp(cfp)
                 bot.send_message(bot.chat_id, message)
-            lambda_logger.info({
-                'command': '/latest',
-                'chat_id': bot.chat_id,
-            })
 
         if bot.message_received == '/categories':
             message = '👉  *Here are the categories available:*\n\n'
@@ -60,10 +51,6 @@ def telegram_bot(event, context):
                 message = message + entry.category + '\n'
 
             bot.send_message(bot.chat_id, message)
-            lambda_logger.info({
-                'command': '/categories',
-                'chat_id': bot.chat_id,
-            })
 
         return bot.ok_response()
 
@@ -80,7 +67,7 @@ def send_telegram_messages_to_channel(event, context):
         cfp.sent_on_telegram()
 
         lambda_logger.info({
-            'description': 'sent new CFP to telegram channel',
+            'description': SENT_TO_TELEGRAM_CHANNEL,
             'cfp_title': cfp.title,
             'chat_id': TELEGRAM_CFPLAND_CHANNEL,
         })

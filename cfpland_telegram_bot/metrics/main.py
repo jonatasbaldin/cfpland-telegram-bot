@@ -5,13 +5,18 @@ import json
 import boto3
 from glom import glom
 
+from ..constants import (
+    COULD_NOT_CREATE_CFP,
+    COULD_NOT_FORMAT_DATES_CFP,
+    CREATED_CFP,
+    SENT_TO_TELEGRAM_CHANNEL,
+)
 from ..logger import logger
 
 
 cloudwatch = boto3.client('cloudwatch')
 
-CREATED_CFP = 'created CFP'
-SENT_TO_TELEGRAM_CHANNEL = 'sent new CFP to telegram channel'
+
 IGNORED_MESSAGE_PREFIX = ('START', 'END', 'REPORT')
 
 
@@ -59,6 +64,30 @@ def send_created_cfp_metric():
     )
 
 
+def send_could_not_create_cfp_metric():
+    cloudwatch.put_metric_data(
+        MetricData=[
+            {
+                'MetricName': 'Failed to Create',
+                'Value': 1.0
+            },
+        ],
+        Namespace='CFP/DATABASE',
+    )
+
+
+def send_could_not_format_dates_cfp_metric():
+    cloudwatch.put_metric_data(
+        MetricData=[
+            {
+                'MetricName': 'Failed to Format Dates',
+                'Value': 1.0
+            },
+        ],
+        Namespace='CFP/DATABASE',
+    )
+
+
 def send_sent_to_telegram_metric():
     cloudwatch.put_metric_data(
         MetricData=[
@@ -83,3 +112,9 @@ def send_metrics(event, context):
 
         if message_type == SENT_TO_TELEGRAM_CHANNEL:
             send_sent_to_telegram_metric()
+
+        if message_type == COULD_NOT_CREATE_CFP:
+            send_could_not_create_cfp_metric()
+
+        if message_type == COULD_NOT_FORMAT_DATES_CFP:
+            send_could_not_format_dates_cfp_metric()

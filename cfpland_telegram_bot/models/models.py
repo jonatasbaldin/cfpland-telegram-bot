@@ -3,7 +3,7 @@ from datetime import datetime
 from peewee import *  # noqa: F403
 import pw_database_url
 
-from ..constants import DATABASE_URL
+from ..constants import COULD_NOT_FORMAT_DATES_CFP, COULD_NOT_CREATE_CFP, CREATED_CFP, DATABASE_URL
 from ..logger import logger
 
 
@@ -53,7 +53,7 @@ class CFP(Model):
                 event_start_date = datetime.strptime(event_start_date, date_pattern).date()
             except ValueError as exception:
                 logger.exception({
-                    'description': 'could not formate dates for CFP',
+                    'description': COULD_NOT_FORMAT_DATES_CFP,
                     'cfp_title': title,
                     'exception': exception,
                 }, exc_info=True)
@@ -62,12 +62,12 @@ class CFP(Model):
                 cfp, created = cls.get_or_create(title=title, defaults=cfp)
                 if created:
                     logger.info({
-                        'description': 'created CFP',
+                        'description': CREATED_CFP,
                         'cfp_title': title,
                     })
             except IntegrityError as exception:
                 logger.exception({
-                    'description': 'could not create CFP',
+                    'description': COULD_NOT_CREATE_CFP,
                     'cfp_title': title,
                     'exception': exception,
                 }, exc_info=True)
