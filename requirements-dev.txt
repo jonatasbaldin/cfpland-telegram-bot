@@ -1,7 +1,9 @@
 boto3==1.9.157
 flake8==3.7.7
 flake8-import-order==0.18.1
-glom==19.2.0
+iopipe==1.8.2
+# iopipe dev dependency
+jmespath>=0.7.1,<1.0.0
 requests==2.22.0
 peewee==3.9.4
 python-telegram-bot==11.1.0

@@ -1,4 +1,4 @@
-glom==19.2.0
+iopipe==1.8.2
 peewee==3.9.4
 python-telegram-bot==11.1.0
 pw-database-url==0.2.0

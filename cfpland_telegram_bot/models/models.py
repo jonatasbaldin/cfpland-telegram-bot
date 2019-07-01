@@ -52,11 +52,14 @@ class CFP(Model):
                 cfp_end_date = datetime.strptime(cfp_end_date, date_pattern).date()
                 event_start_date = datetime.strptime(event_start_date, date_pattern).date()
             except ValueError as exception:
-                logger.exception({
-                    'description': COULD_NOT_FORMAT_DATES_CFP,
-                    'cfp_title': title,
-                    'exception': exception,
-                }, exc_info=True)
+                logger.exception(
+                    {
+                        'description': COULD_NOT_FORMAT_DATES_CFP,
+                        'cfp_title': title,
+                        'exception': exception,
+                    },
+                    code=COULD_NOT_FORMAT_DATES_CFP, exc_info=True,
+                )
 
             try:
                 cfp, created = cls.get_or_create(title=title, defaults=cfp)
@@ -64,13 +67,15 @@ class CFP(Model):
                     logger.info({
                         'description': CREATED_CFP,
                         'cfp_title': title,
-                    })
+                    }, code=CREATED_CFP)
             except IntegrityError as exception:
-                logger.exception({
-                    'description': COULD_NOT_CREATE_CFP,
-                    'cfp_title': title,
-                    'exception': exception,
-                }, exc_info=True)
+                logger.exception(
+                    {
+                        'description': COULD_NOT_CREATE_CFP,
+                        'cfp_title': title,
+                        'exception': exception,
+                    }, code=COULD_NOT_CREATE_CFP, exc_info=True,
+                )
 
     @classmethod
     def get_latest(cls):

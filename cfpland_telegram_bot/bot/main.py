@@ -2,6 +2,7 @@ import re
 
 from .bot import bot
 from ..constants import SENT_TO_TELEGRAM_CHANNEL, TELEGRAM_CFPLAND_CHANNEL
+from ..iopipe import iopipe
 from ..logger import logger
 from ..models import CFP, DB
 
@@ -9,6 +10,7 @@ from ..models import CFP, DB
 DB.init()
 
 
+@iopipe
 def telegram_bot(event, context):
     lambda_logger = logger.bind(lambda_event=event, lambda_context=vars(context))
     body = event.get('body')
@@ -57,6 +59,7 @@ def telegram_bot(event, context):
     return bot.error_response()
 
 
+@iopipe
 def send_telegram_messages_to_channel(event, context):
     lambda_logger = logger.bind(lambda_event=event, lambda_context=vars(context))
     not_sent = CFP.get_not_sent_telegram()
@@ -66,13 +69,16 @@ def send_telegram_messages_to_channel(event, context):
         bot.send_message(TELEGRAM_CFPLAND_CHANNEL, message)
         cfp.sent_on_telegram()
 
-        lambda_logger.info({
-            'description': SENT_TO_TELEGRAM_CHANNEL,
-            'cfp_title': cfp.title,
-            'chat_id': TELEGRAM_CFPLAND_CHANNEL,
-        })
+        lambda_logger.info(
+            {
+                'description': SENT_TO_TELEGRAM_CHANNEL,
+                'cfp_title': cfp.title,
+                'chat_id': TELEGRAM_CFPLAND_CHANNEL,
+            }, code=SENT_TO_TELEGRAM_CHANNEL,
+        )
 
 
+@iopipe
 def set_telegram_webhook(event, context):
     webhook = bot.set_webhook(event)
 

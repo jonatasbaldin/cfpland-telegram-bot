@@ -3,7 +3,6 @@ import gzip
 import json
 
 import boto3
-from glom import glom
 
 from ..constants import (
     COULD_NOT_CREATE_CFP,
@@ -11,6 +10,7 @@ from ..constants import (
     CREATED_CFP,
     SENT_TO_TELEGRAM_CHANNEL,
 )
+from ..iopipe import iopipe
 from ..logger import logger
 
 
@@ -21,7 +21,7 @@ IGNORED_MESSAGE_PREFIX = ('START', 'END', 'REPORT')
 
 
 def decode_log_event(event):
-    data = glom(event, 'awslogs.data')
+    data = event.get('awslogs').get('data')
     if data:
         return json.loads(gzip.decompress(b64decode(data)).decode())
 
@@ -43,13 +43,8 @@ def get_log_messages(log_data):
     return log_messages
 
 
-def get_message_type(structured_log):
-    description = glom(structured_log, 'event.description')
-    if not description:
-        return
-
-    if description in [CREATED_CFP, SENT_TO_TELEGRAM_CHANNEL]:
-        return description
+def get_message_code(structured_log):
+    return structured_log.get('code')
 
 
 def send_created_cfp_metric():
@@ -100,21 +95,22 @@ def send_sent_to_telegram_metric():
     )
 
 
+@iopipe
 def send_metrics(event, context):
     log_data = decode_log_event(event)
     log_messages = get_log_messages(log_data)
 
     for message in log_messages:
-        message_type = get_message_type(message)
+        code = get_message_code(message)
 
-        if message_type == CREATED_CFP:
+        if code == CREATED_CFP:
             send_created_cfp_metric()
 
-        if message_type == SENT_TO_TELEGRAM_CHANNEL:
+        if code == SENT_TO_TELEGRAM_CHANNEL:
             send_sent_to_telegram_metric()
 
-        if message_type == COULD_NOT_CREATE_CFP:
+        if code == COULD_NOT_CREATE_CFP:
             send_could_not_create_cfp_metric()
 
-        if message_type == COULD_NOT_FORMAT_DATES_CFP:
+        if code == COULD_NOT_FORMAT_DATES_CFP:
             send_could_not_format_dates_cfp_metric()

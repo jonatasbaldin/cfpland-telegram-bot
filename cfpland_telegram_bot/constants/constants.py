@@ -4,9 +4,10 @@ from ..exceptions import MissingEnvironmentVariable
 
 
 # Configuration
-DATABASE_URL = environ.get('DATABASE_URL')
 CFPLAND_URL = 'https://api.cfpland.com/v0/conferences'
+DATABASE_URL = environ.get('DATABASE_URL')
 ENVIRONMENT = environ.get('ENVIRONMENT')
+IOPIPE_TOKEN = environ.get('IOPIPE_TOKEN', '')
 TELEGRAM_TOKEN = environ.get('TELEGRAM_TOKEN')
 TELEGRAM_CFPLAND_CHANNEL = environ.get('TELEGRAM_CFPLAND_CHANNEL')
 
