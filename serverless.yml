@@ -75,3 +75,7 @@ plugins:
 custom:
   pythonRequirements:
     dockerizePip: 'non-linux'
+    slim: true
+    useDownloadCache: true
+    useStaticCache: true
+    fileName: requirements-prod.txt
