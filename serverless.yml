@@ -4,6 +4,7 @@ provider:
   name: aws
   region: eu-west-1
   runtime: python3.7
+  memorySize: 128
   environment: 
     DATABASE_URL: ${env:DATABASE_URL}
     ENVIRONMENT: ${env:ENVIRONMENT}
