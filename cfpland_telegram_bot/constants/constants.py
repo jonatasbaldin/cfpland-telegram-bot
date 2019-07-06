@@ -2,14 +2,21 @@ from os import environ
 
 from ..exceptions import MissingEnvironmentVariable
 
+from ssm_cache import SSMParameterGroup
+
 
 # Configuration
 CFPLAND_URL = 'https://api.cfpland.com/v0/conferences'
-DATABASE_URL = environ.get('DATABASE_URL')
-ENVIRONMENT = environ.get('ENVIRONMENT')
-IOPIPE_TOKEN = environ.get('IOPIPE_TOKEN', '')
-TELEGRAM_TOKEN = environ.get('TELEGRAM_TOKEN')
+ENVIRONMENT = environ.get('ENVIRONMENT').lower()  # prod or dev
 TELEGRAM_CFPLAND_CHANNEL = environ.get('TELEGRAM_CFPLAND_CHANNEL')
+
+
+# SSM Parameters
+group = SSMParameterGroup(base_path=f'/CFPLAND/{ENVIRONMENT.upper()}')
+DATABASE_URL = group.parameter('/DATABASE_URL').value
+IOPIPE_TOKEN = group.parameter('/IOPIPE_TOKEN').value
+TELEGRAM_TOKEN = group.parameter('/TELEGRAM_TOKEN').value
+
 
 if not ENVIRONMENT:
     raise MissingEnvironmentVariable('ENVIRONMENT')

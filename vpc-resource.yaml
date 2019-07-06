@@ -1,0 +1,6 @@
+securityGroupIds:
+  - sg-06ea07fa15e7613da
+subnetIds:
+  - subnet-01595a21721d05a66
+  - subnet-084fdc5a9a5fa3126
+  - subnet-0e537c2e076614089

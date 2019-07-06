@@ -1,16 +1,41 @@
 service: cfpland-telegram-bot
 
+custom:
+  pythonRequirements:
+    dockerizePip: 'non-linux'
+    slim: true
+    useDownloadCache: true
+    useStaticCache: true
+    fileName: requirements-prod.txt
+
+  serverless-iam-roles-per-function:
+    defaultInherit: true
+
+  # Environment variables  
+  TELEGRAM_CFPLAND_CHANNEL:
+    prod: '@cfpland'
+    dev: ''
+  
+  KMS_KEY_ID:
+    prod: 'cf1e9e81-7d34-461e-9fe9-8afddba7787e'
+    dev: ''
+
 provider:
   name: aws
   region: eu-west-1
   runtime: python3.7
   memorySize: 128
   environment: 
-    DATABASE_URL: ${env:DATABASE_URL}
-    ENVIRONMENT: ${env:ENVIRONMENT}
-    IOPIPE_TOKEN: ${env:IOPIPE_TOKEN}
-    TELEGRAM_TOKEN: ${env:TELEGRAM_TOKEN}
-    TELEGRAM_CFPLAND_CHANNEL: ${env:TELEGRAM_CFPLAND_CHANNEL}
+    ENVIRONMENT: ${opt:stage}
+    TELEGRAM_CFPLAND_CHANNEL: ${self:custom.TELEGRAM_CFPLAND_CHANNEL.${opt:stage}}
+
+  iamRoleStatements:
+    - Effect: 'Allow'
+      Action: 'ssm:GetParameters'
+      Resource: 'arn:aws:ssm:${self:provider.region}:*:parameter/CFPLAND/*'
+    - Effect: 'Allow'
+      Action: 'kms:Decrypt'
+      Resource: 'arn:aws:kms:${self:provider.region}:*:key/${self:custom.KMS_KEY_ID.${opt:stage}}'
 
 functions:
   parse: 
@@ -18,13 +43,7 @@ functions:
     timeout: 30
     events:
       - schedule: cron(0 10 * * ? *)
-    vpc:
-      securityGroupIds:
-        - sg-06ea07fa15e7613da
-      subnetIds:
-        - subnet-01595a21721d05a66
-        - subnet-084fdc5a9a5fa3126
-        - subnet-0e537c2e076614089
+    vpc: ${file(vpc-resource.yaml)}
 
   telegram_bot:
     handler: cfpland_telegram_bot.bot.main.telegram_bot
@@ -33,35 +52,24 @@ functions:
       - http:
           path: /telegram_bot
           method: post
-    vpc:
-      securityGroupIds:
-        - sg-06ea07fa15e7613da
-      subnetIds:
-        - subnet-01595a21721d05a66
-        - subnet-084fdc5a9a5fa3126
-        - subnet-0e537c2e076614089
+    vpc: ${file(vpc-resource.yaml)}
 
   send_telegram_messages_to_channel:
     handler: cfpland_telegram_bot.bot.main.send_telegram_messages_to_channel
     timeout: 60
     events:
       - schedule: cron(0 11 * * ? *)
-    vpc:
-      securityGroupIds:
-        - sg-06ea07fa15e7613da
-      subnetIds:
-        - subnet-01595a21721d05a66
-        - subnet-084fdc5a9a5fa3126
-        - subnet-0e537c2e076614089
+    vpc: ${file(vpc-resource.yaml)}
 
   set_telegram_webhook:
     handler: cfpland_telegram_bot.bot.main.set_telegram_webhook
+    vpc: ${file(vpc-resource.yaml)}
 
   send_metrics:
     handler: cfpland_telegram_bot.metrics.main.send_metrics
     events:
-      - cloudwatchLog: '/aws/lambda/cfpland-telegram-bot-dev-parse'
-      - cloudwatchLog: '/aws/lambda/cfpland-telegram-bot-dev-send_telegram_messages_to_channel'
+      - cloudwatchLog: '/aws/lambda/cfpland-telegram-bot-${opt:stage}-parse'
+      - cloudwatchLog: '/aws/lambda/cfpland-telegram-bot-${opt:stage}-send_telegram_messages_to_channel'
     iamRoleStatements:
       - Effect: "Allow"
         Action:
@@ -71,13 +79,4 @@ functions:
 
 plugins:
   - serverless-python-requirements
-  - serverless-dotenv-plugin
   - serverless-iam-roles-per-function
-
-custom:
-  pythonRequirements:
-    dockerizePip: 'non-linux'
-    slim: true
-    useDownloadCache: true
-    useStaticCache: true
-    fileName: requirements-prod.txt
