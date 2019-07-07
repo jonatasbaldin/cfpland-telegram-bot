@@ -2,7 +2,9 @@
   "name": "cfpland-telegram-bot",
   "description": "",
   "version": "0.1.0",
-  "dependencies": {},
+  "dependencies": {
+    "serverless-stage-manager": "^1.0.5"
+  },
   "devDependencies": {
     "serverless-iam-roles-per-function": "^2.0.1",
     "serverless-python-requirements": "^4.3.0"

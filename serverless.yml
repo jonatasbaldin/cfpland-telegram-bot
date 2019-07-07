@@ -8,6 +8,10 @@ custom:
     useStaticCache: true
     fileName: requirements-prod.txt
 
+  stages:
+    - dev
+    - prod
+
   serverless-iam-roles-per-function:
     defaultInherit: true
 
@@ -80,3 +84,4 @@ functions:
 plugins:
   - serverless-python-requirements
   - serverless-iam-roles-per-function
+  - serverless-stage-manager
