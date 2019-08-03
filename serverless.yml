@@ -24,6 +24,10 @@ custom:
     prod: 'cf1e9e81-7d34-461e-9fe9-8afddba7787e'
     dev: ''
 
+  DYNAMODB_TABLE:
+    prod: 'cfpland'
+    dev: 'cfpland-dev'
+
 provider:
   name: aws
   region: eu-west-1
@@ -46,7 +50,9 @@ functions:
     handler: cfpland_telegram_bot.parser.main.parse
     timeout: 30
     events:
-      - schedule: cron(0 10 * * ? *)
+      - schedule:
+        rate: cron(0 10 * * ? *)
+        enabled: true
     vpc: ${file(vpc-resource.yaml)}
 
   telegram_bot:
@@ -85,3 +91,21 @@ plugins:
   - serverless-python-requirements
   - serverless-iam-roles-per-function
   - serverless-stage-manager
+
+resources:
+  Resources:
+    cfpLandTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:custom.DYNAMODB_TABLE.${opt:stage}}
+        AttributeDefinitions:
+          - AttributeName: cfpEndDate
+            AttributeType: S
+          - AttributeName: category
+            AttributeType: S
+        KeySchema:
+          - AttributeName: category
+            KeyType: HASH
+          - AttributeName: cfpEndDate
+            KeyType: RANGE
+        BillingMode: PAY_PER_REQUEST

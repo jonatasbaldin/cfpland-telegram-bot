@@ -8,6 +8,7 @@ from ..constants import (
     COULD_NOT_CREATE_CFP,
     COULD_NOT_FORMAT_DATES_CFP,
     CREATED_CFP,
+    CREATED_CFP_DYNAMODB,
     SENT_TO_TELEGRAM_CHANNEL,
 )
 from ..iopipe import iopipe
@@ -52,6 +53,18 @@ def send_created_cfp_metric():
         MetricData=[
             {
                 'MetricName': 'Created',
+                'Value': 1.0
+            },
+        ],
+        Namespace='CFP/DATABASE',
+    )
+
+
+def send_created_cfp_dynamodb_metric():
+    cloudwatch.put_metric_data(
+        MetricData=[
+            {
+                'MetricName': 'Created Dynamodb',
                 'Value': 1.0
             },
         ],
@@ -105,6 +118,9 @@ def send_metrics(event, context):
 
         if code == CREATED_CFP:
             send_created_cfp_metric()
+
+        if code == CREATED_CFP_DYNAMODB:
+            send_created_cfp_dynamodb_metric()
 
         if code == SENT_TO_TELEGRAM_CHANNEL:
             send_sent_to_telegram_metric()

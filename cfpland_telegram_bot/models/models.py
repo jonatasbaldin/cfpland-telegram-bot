@@ -3,7 +3,12 @@ from datetime import datetime
 from peewee import *  # noqa: F403
 import pw_database_url
 
-from ..constants import COULD_NOT_CREATE_CFP, COULD_NOT_FORMAT_DATES_CFP, CREATED_CFP, DATABASE_URL
+from ..constants import (
+    COULD_NOT_CREATE_CFP,
+    COULD_NOT_FORMAT_DATES_CFP,
+    CREATED_CFP,
+    DATABASE_URL,
+)
 from ..logger import logger
 
 

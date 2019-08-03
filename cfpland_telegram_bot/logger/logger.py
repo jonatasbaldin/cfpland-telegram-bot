@@ -12,7 +12,7 @@ structlog_processors = [
     structlog.processors.UnicodeDecoder(),
 ]
 
-if ENVIRONMENT == 'prod':
+if ENVIRONMENT in ['prod', 'test']:
     structlog_processors.append(structlog.processors.JSONRenderer())
 else:
     structlog_processors.append(structlog.dev.ConsoleRenderer())
