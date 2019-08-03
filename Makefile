@@ -6,8 +6,8 @@ test:
 	pytest
 
 deploy-dev:
-	sls deploy -s dev
+	npx sls deploy -s dev
 
 deploy-prod:
 	npm install
-	sls deploy -s prod
+	npx sls deploy -s prod
