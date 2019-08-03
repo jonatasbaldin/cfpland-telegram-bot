@@ -44,13 +44,13 @@ class CFPDB:
 
             logger.info({
                 'description': CREATED_CFP_DYNAMODB,
-                'cfp_title': title,
+                'cfp': cfp,
             }, code=CREATED_CFP_DYNAMODB)
         except ClientError as exception:
             logger.exception(
                 {
                     'description': COULD_NOT_CREATE_CFP,
-                    'cfp_title': title,
+                    'cfp': cfp,
                     'exception': exception,
                 }, code=COULD_NOT_CREATE_CFP, exc_info=True,
             )
