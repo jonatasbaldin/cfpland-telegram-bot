@@ -3,7 +3,7 @@ language: python
 python:
   - '3.7'
 install:
-  - make dev-dep
+  - make dep-dev
   - nvm install 11.9
 script:
   - make test
