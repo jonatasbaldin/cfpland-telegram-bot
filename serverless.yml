@@ -54,6 +54,12 @@ functions:
         rate: cron(0 10 * * ? *)
         enabled: true
     vpc: ${file(vpc-resource.yaml)}
+    iamRoleStatements:
+      - Effect: Allow
+        Action:
+          - dynamodb:PutItem
+        Resource: 
+          - 'Fn::GetAtt': [ cfpLandTable, Arn]
 
   telegram_bot:
     handler: cfpland_telegram_bot.bot.main.telegram_bot
