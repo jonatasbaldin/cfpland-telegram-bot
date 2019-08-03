@@ -12,5 +12,5 @@ deploy-prod:
 
 deploy-prod-ci:
 	nvm install 11.9
-  	npm install
+	npm install
 	sls deploy -s prod
