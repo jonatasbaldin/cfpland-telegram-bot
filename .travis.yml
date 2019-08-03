@@ -7,6 +7,10 @@ env:
   - BOTO_CONFIG=/dev/null
 install:
   - make dep-dev
-  - nvm install 11.9
 script:
   - make test
+deploy:
+  provider: script
+  script: make deploy-prod-ci
+  on: 
+    branch: master
