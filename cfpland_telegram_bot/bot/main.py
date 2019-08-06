@@ -1,13 +1,17 @@
+from collections import namedtuple
 import re
 
 from .bot import bot
 from ..constants import SENT_TO_TELEGRAM_CHANNEL, TELEGRAM_CFPLAND_CHANNEL
 from ..iopipe import iopipe
 from ..logger import logger
-from ..models import CFP, DB
+from ..models import CFP
 
 
-DB.init()
+Cfp = namedtuple(
+    'CFP',
+    ['title', 'category', 'cfp_end_date', 'perk_list', 'event_start_date', 'location', 'link'],
+)
 
 
 @iopipe
@@ -61,13 +65,35 @@ def telegram_bot(event, context):
 
 @iopipe
 def send_telegram_messages_to_channel(event, context):
-    lambda_logger = logger.bind(lambda_event=event, lambda_context=vars(context))
-    not_sent = CFP.get_not_sent_telegram()
+    """
+    Send a CFP message to the Telegram distribution channel.
+    The `event` is a DynamoDB stream.
+    """
 
-    for cfp in not_sent:
+    lambda_logger = logger.bind(lambda_event=event, lambda_context=vars(context))
+
+    for item in event.get('Records'):
+        cfp_data = item.get('dynamodb').get('NewImage')
+        title = cfp_data.get('title').get('S')
+        category = cfp_data.get('category').get('S')
+        cfp_end_date = cfp_data.get('cfpEndDate').get('S')
+        perk_list = cfp_data.get('perkList').get('S')
+        event_start_date = cfp_data.get('eventStartDate').get('S')
+        location = cfp_data.get('location').get('S')
+        link = cfp_data.get('link').get('S')
+
+        cfp = Cfp(
+            title,
+            category,
+            cfp_end_date,
+            perk_list,
+            event_start_date,
+            location,
+            link,
+        )
+
         message = bot.format_cfp(cfp)
         bot.send_message(TELEGRAM_CFPLAND_CHANNEL, message)
-        cfp.sent_on_telegram()
 
         lambda_logger.info(
             {

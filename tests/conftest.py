@@ -47,3 +47,35 @@ def dynamodb_table(aws_credentials):
         )
 
         yield table
+
+
+@pytest.fixture()
+def dynamodb_stream_event():
+    yield {
+        'Records': [
+            {
+                'eventID': '75a223bcaa6a59998df65e65dbdfcae8',
+                'eventName': 'INSERT',
+                'eventVersion': '1.1',
+                'eventSource': 'aws:dynamodb',
+                'awsRegion': 'eu-west-1',
+                'dynamodb': {
+                    'ApproximateCreationDateTime': 1565107189.0,
+                    'NewImage':
+                        {
+                            'id': {'S': '1'},
+                            'title': {'S': 'Title'},
+                            'category': {'S': 'Category'},
+                            'cfpEndDate': {'S': '2019-01-01'},
+                            'perkList': {'S': 'None'},
+                            'eventStartDate': {'S': '2019-01-01'},
+                            'location': {'S': 'Remote'},
+                            'link': {'S': 'https://deployeveryday.com'},
+                        },
+                    'SequenceNumber': '108124000000000048251595977',
+                    'SizeBytes': 86,
+                    'StreamViewType': 'NEW_AND_OLD_IMAGES',
+                },
+            }
+        ]
+    }

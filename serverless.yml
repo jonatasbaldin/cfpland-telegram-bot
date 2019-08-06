@@ -74,8 +74,24 @@ functions:
     handler: cfpland_telegram_bot.bot.main.send_telegram_messages_to_channel
     timeout: 60
     events:
-      - schedule: cron(0 11 * * ? *)
-    vpc: ${file(vpc-resource.yaml)}
+      # - stream: 'arn:aws:dynamodb:${self:provider.region}:*:table/${self:custom.DYNAMODB_TABLE.${opt:stage}}/stream/*'
+      - stream:
+          type: dynamodb
+          batchSize: 1
+          startingPosition: LATEST
+          arn:
+            Fn::GetAtt:
+              - cfpLandTable
+              - StreamArn
+    iamRoleStatements:
+      - Effect: Allow
+        Action:
+          - dynamodb:DescribeStream
+          - dynamodb:GetRecords
+          - dynamodb:GetShardIterator
+          - dynamodb:ListStreams
+        Resource: 
+          - 'Fn::GetAtt': [ cfpLandTable, Arn]
 
   set_telegram_webhook:
     handler: cfpland_telegram_bot.bot.main.set_telegram_webhook
