@@ -33,6 +33,8 @@ class TestCFPDB:
         assert item.get('cfp_end_date') == cfp.get('cfpEndDate')
         assert item.get('location') == cfp.get('location')
         assert item.get('perk_list') == cfp.get('perkList')
+        assert item.get('id')
+        assert item.get('createdAt')
 
         assert dynamodb_table.item_count == 1
 

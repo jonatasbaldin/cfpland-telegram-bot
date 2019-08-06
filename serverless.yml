@@ -109,9 +109,17 @@ resources:
             AttributeType: S
           - AttributeName: category
             AttributeType: S
+          - AttributeName: title
+            AttributeType: S
         KeySchema:
           - AttributeName: category
             KeyType: HASH
           - AttributeName: cfpEndDate
             KeyType: RANGE
         BillingMode: PAY_PER_REQUEST
+        GlobalSecondaryIndexes:
+          - IndexName: title
+            KeySchema:
+            - AttributeName: title
+              KeyType: HASH
+            BillingMode: PAY_PER_REQUEST

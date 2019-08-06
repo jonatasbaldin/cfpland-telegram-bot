@@ -1,3 +1,4 @@
+from datetime import datetime
 from uuid import uuid4
 
 from botocore.exceptions import ClientError
@@ -23,6 +24,7 @@ class CFPDB:
         description = cfp.get('description', 'None')
         location = cfp.get('location', 'None')
         perk_list = cfp.get('perk_list', 'None')
+        created_at = datetime.now().strftime('%Y-%m-%dT%H:%M:%SZ')
 
         if None in [title, category, cfp_end_date, event_start_date]:
             raise MissingCFPAttributes(cfp)
@@ -39,6 +41,7 @@ class CFPDB:
                     'eventStartDate': event_start_date,
                     'location': location,
                     'perkList': perk_list,
+                    'createdAt': created_at,
                 }
             )
 
