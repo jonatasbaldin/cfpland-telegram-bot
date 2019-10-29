@@ -1,4 +1,4 @@
-service: cfpland-telegram-bot
+service: cfpland-bot
 
 custom:
   pythonRequirements:
@@ -43,7 +43,7 @@ provider:
 
 functions:
   parse: 
-    handler: cfpland_telegram_bot.parser.main.parse
+    handler: cfpland_bot.parser.main.parse
     timeout: 30
     events:
       - schedule:
@@ -52,7 +52,7 @@ functions:
     vpc: ${file(vpc-resource.yaml)}
 
   telegram_bot:
-    handler: cfpland_telegram_bot.bot.main.telegram_bot
+    handler: cfpland_bot.bot.main.telegram_bot
     timeout: 30
     events:
       - http:
@@ -61,13 +61,13 @@ functions:
     vpc: ${file(vpc-resource.yaml)}
 
   send_telegram_messages_to_channel:
-    handler: cfpland_telegram_bot.bot.main.send_telegram_messages_to_channel
+    handler: cfpland_bot.bot.main.send_telegram_messages_to_channel
     timeout: 60
     events:
       - schedule: cron(0 11 * * ? *)
 
   set_telegram_webhook:
-    handler: cfpland_telegram_bot.bot.main.set_telegram_webhook
+    handler: cfpland_bot.bot.main.set_telegram_webhook
     vpc: ${file(vpc-resource.yaml)}
 
 plugins:
