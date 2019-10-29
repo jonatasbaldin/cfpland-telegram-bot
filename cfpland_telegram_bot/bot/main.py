@@ -7,12 +7,6 @@ from ..logger import logger
 from ..models import CFP
 
 
-Cfp = namedtuple(
-    'CFP',
-    ['title', 'category', 'cfp_end_date', 'perk_list', 'event_start_date', 'location', 'link'],
-)
-
-
 def telegram_bot(event, context):
     lambda_logger = logger.bind(lambda_event=event, lambda_context=vars(context))
     body = event.get('body')
