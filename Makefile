@@ -3,7 +3,6 @@ dep-dev:
 
 test:
 	flake8 .
-	pytest
 
 deploy-dev:
 	npx sls deploy -s dev

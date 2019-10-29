@@ -5,7 +5,6 @@ from .constants import (  # noqa: F401
     CREATED_CFP,
     DATABASE_URL,
     ENVIRONMENT,
-    _TOKEN,
     SENT_TO_TELEGRAM_CHANNEL,
     TELEGRAM_CFPLAND_CHANNEL,
     TELEGRAM_TOKEN,
