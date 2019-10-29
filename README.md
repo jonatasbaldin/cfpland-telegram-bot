@@ -15,7 +15,6 @@ Create _all_ the environment variables necessary – using the `KeyId` from the 
 ```bash
 $ aws ssm put-parameter --name /CFPLAND/PROD/DATABASE_URL --type String --value <url> --key-id <key-id>
 $ aws ssm put-parameter --name /CFPLAND/PROD/TELEGRAM_TOKEN --type String --value <url> --key-id <key-id>
-$ aws ssm put-parameter --name /CFPLAND/PROD/IOPIPE_TOKEN --type String --value <url> --key-id <key-id>
 ```
 
 ## License

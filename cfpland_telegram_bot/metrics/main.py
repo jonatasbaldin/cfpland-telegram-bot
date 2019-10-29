@@ -11,7 +11,6 @@ from ..constants import (
     CREATED_CFP_DYNAMODB,
     SENT_TO_TELEGRAM_CHANNEL,
 )
-from ..iopipe import iopipe
 from ..logger import logger
 
 
@@ -108,7 +107,6 @@ def send_sent_to_telegram_metric():
     )
 
 
-@iopipe
 def send_metrics(event, context):
     log_data = decode_log_event(event)
     log_messages = get_log_messages(log_data)

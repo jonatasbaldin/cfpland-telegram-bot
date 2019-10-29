@@ -3,7 +3,6 @@ import re
 
 from .bot import bot
 from ..constants import SENT_TO_TELEGRAM_CHANNEL, TELEGRAM_CFPLAND_CHANNEL
-from ..iopipe import iopipe
 from ..logger import logger
 from ..models import CFP
 
@@ -14,7 +13,6 @@ Cfp = namedtuple(
 )
 
 
-@iopipe
 def telegram_bot(event, context):
     lambda_logger = logger.bind(lambda_event=event, lambda_context=vars(context))
     body = event.get('body')
@@ -63,7 +61,6 @@ def telegram_bot(event, context):
     return bot.error_response()
 
 
-@iopipe
 def send_telegram_messages_to_channel(event, context):
     """
     Send a CFP message to the Telegram distribution channel.
@@ -104,7 +101,6 @@ def send_telegram_messages_to_channel(event, context):
         )
 
 
-@iopipe
 def set_telegram_webhook(event, context):
     webhook = bot.set_webhook(event)
 
