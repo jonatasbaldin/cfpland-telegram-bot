@@ -24,10 +24,6 @@ custom:
     prod: 'cf1e9e81-7d34-461e-9fe9-8afddba7787e'
     dev: ''
 
-  DYNAMODB_TABLE:
-    prod: 'cfpland'
-    dev: 'cfpland-dev'
-
 provider:
   name: aws
   region: eu-west-1
@@ -54,12 +50,6 @@ functions:
         rate: cron(0 10 * * ? *)
         enabled: true
     vpc: ${file(vpc-resource.yaml)}
-    iamRoleStatements:
-      - Effect: Allow
-        Action:
-          - dynamodb:PutItem
-        Resource: 
-          - 'Fn::GetAtt': [ cfpLandTable, Arn]
 
   telegram_bot:
     handler: cfpland_telegram_bot.bot.main.telegram_bot
@@ -74,68 +64,13 @@ functions:
     handler: cfpland_telegram_bot.bot.main.send_telegram_messages_to_channel
     timeout: 60
     events:
-      # - stream: 'arn:aws:dynamodb:${self:provider.region}:*:table/${self:custom.DYNAMODB_TABLE.${opt:stage}}/stream/*'
-      - stream:
-          type: dynamodb
-          batchSize: 1
-          startingPosition: LATEST
-          arn:
-            Fn::GetAtt:
-              - cfpLandTable
-              - StreamArn
-    iamRoleStatements:
-      - Effect: Allow
-        Action:
-          - dynamodb:DescribeStream
-          - dynamodb:GetRecords
-          - dynamodb:GetShardIterator
-          - dynamodb:ListStreams
-        Resource: 
-          - 'Fn::GetAtt': [ cfpLandTable, Arn]
+      - schedule: cron(0 11 * * ? *)
 
   set_telegram_webhook:
     handler: cfpland_telegram_bot.bot.main.set_telegram_webhook
     vpc: ${file(vpc-resource.yaml)}
 
-  send_metrics:
-    handler: cfpland_telegram_bot.metrics.main.send_metrics
-    events:
-      - cloudwatchLog: '/aws/lambda/cfpland-telegram-bot-${opt:stage}-parse'
-      - cloudwatchLog: '/aws/lambda/cfpland-telegram-bot-${opt:stage}-send_telegram_messages_to_channel'
-    iamRoleStatements:
-      - Effect: "Allow"
-        Action:
-          - 'cloudwatch:PutMetricData'
-        # TODO: add specific resource
-        Resource: '*'
-
 plugins:
   - serverless-python-requirements
   - serverless-iam-roles-per-function
   - serverless-stage-manager
-
-resources:
-  Resources:
-    cfpLandTable:
-      Type: AWS::DynamoDB::Table
-      Properties:
-        TableName: ${self:custom.DYNAMODB_TABLE.${opt:stage}}
-        AttributeDefinitions:
-          - AttributeName: cfpEndDate
-            AttributeType: S
-          - AttributeName: category
-            AttributeType: S
-          - AttributeName: title
-            AttributeType: S
-        KeySchema:
-          - AttributeName: category
-            KeyType: HASH
-          - AttributeName: cfpEndDate
-            KeyType: RANGE
-        BillingMode: PAY_PER_REQUEST
-        GlobalSecondaryIndexes:
-          - IndexName: title
-            KeySchema:
-            - AttributeName: title
-              KeyType: HASH
-      BillingMode: PAY_PER_REQUEST
