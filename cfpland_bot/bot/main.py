@@ -10,8 +10,6 @@ def telegram_bot(event, context):
     lambda_logger = logger.bind(lambda_event=event, lambda_context=vars(context))
     body = event.get('body')
 
-    lambda_logger.info()
-
     if event.get('httpMethod') == 'POST' and body:
         bot.update(body)
 

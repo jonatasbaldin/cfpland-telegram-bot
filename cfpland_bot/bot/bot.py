@@ -2,7 +2,8 @@ import json
 
 import telegram
 
-from ..constants import TELEGRAM_TOKEN
+from ..constants import COULD_NOT_UPDATE_BOT_INFORMATION, TELEGRAM_TOKEN
+from ..logger import logger
 
 
 START_MESSAGE = """
@@ -33,8 +34,19 @@ class TelegramBot:
 
     def update(self, request_body):
         update = telegram.Update.de_json(json.loads(request_body), self.bot)
-        self.chat_id = update.message.chat.id
-        self.message_received = update.message.text
+        try:
+            self.chat_id = update.message.chat.id
+            self.message_received = update.message.text
+        except AttributeError as exception:
+            logger.exception(
+                {
+                    'description': COULD_NOT_UPDATE_BOT_INFORMATION,
+                    'exception': exception,
+                },
+                code=COULD_NOT_UPDATE_BOT_INFORMATION, exc_info=True,
+            )
+
+            return self.error_response()
 
     def send_message(self, chat_id, text):
         self.bot.send_message(

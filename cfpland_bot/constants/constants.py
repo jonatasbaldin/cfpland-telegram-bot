@@ -36,5 +36,6 @@ if not TELEGRAM_CFPLAND_CHANNEL:
 # Logging
 COULD_NOT_CREATE_CFP = 'could not create CFP'
 COULD_NOT_FORMAT_DATES_CFP = 'could not formate dates for CFP'
+COULD_NOT_UPDATE_BOT_INFORMATION = 'could not update bot information'
 CREATED_CFP = 'created CFP'
 SENT_TO_TELEGRAM_CHANNEL = 'sent new CFP to telegram channel'
