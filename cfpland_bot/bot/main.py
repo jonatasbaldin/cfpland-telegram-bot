@@ -26,7 +26,7 @@ def telegram_bot(event, context):
                 code=COULD_NOT_UPDATE_BOT_INFORMATION, exc_info=True,
             )
 
-            return bot.error_response()
+            return bot.ok_response()
 
         lambda_logger.info({
             'message_received': bot.message_received,
