@@ -1,7 +1,11 @@
 import re
 
 from .bot import bot
-from ..constants import SENT_TO_TELEGRAM_CHANNEL, TELEGRAM_CFPLAND_CHANNEL
+from ..constants import (
+    COULD_NOT_UPDATE_BOT_INFORMATION,
+    SENT_TO_TELEGRAM_CHANNEL,
+    TELEGRAM_CFPLAND_CHANNEL,
+)
 from ..logger import logger
 from ..models import CFP
 
@@ -11,7 +15,18 @@ def telegram_bot(event, context):
     body = event.get('body')
 
     if event.get('httpMethod') == 'POST' and body:
-        bot.update(body)
+        try:
+            bot.update(body)
+        except AttributeError as exception:
+            logger.exception(
+                {
+                    'description': COULD_NOT_UPDATE_BOT_INFORMATION,
+                    'exception': exception,
+                },
+                code=COULD_NOT_UPDATE_BOT_INFORMATION, exc_info=True,
+            )
+
+            return bot.error_response()
 
         lambda_logger.info({
             'message_received': bot.message_received,
