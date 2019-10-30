@@ -18,7 +18,7 @@ def telegram_bot(event, context):
         try:
             bot.update(body)
         except AttributeError as exception:
-            logger.exception(
+            lambda_logger.exception(
                 {
                     'description': COULD_NOT_UPDATE_BOT_INFORMATION,
                     'exception': exception,
