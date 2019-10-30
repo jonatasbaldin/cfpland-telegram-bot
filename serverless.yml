@@ -1,5 +1,3 @@
-org: jonatasbaldin
-app: cfpland-bot
 service: cfpland-bot
 
 custom:
