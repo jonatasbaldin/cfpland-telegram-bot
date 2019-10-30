@@ -8,7 +8,7 @@ custom:
     useStaticCache: true
     fileName: requirements-prod.txt
 
-  stage: ${$opt:stage, self:provider.stage}
+  stage: ${opt:stage, self:provider.stage}
 
   serverless-iam-roles-per-function:
     defaultInherit: true
