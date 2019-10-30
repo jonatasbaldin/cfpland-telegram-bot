@@ -8,9 +8,7 @@ custom:
     useStaticCache: true
     fileName: requirements-prod.txt
 
-  stages:
-    - dev
-    - prod
+  stage: ${$opt:stage, self:provider.stage}
 
   serverless-iam-roles-per-function:
     defaultInherit: true
@@ -29,9 +27,10 @@ provider:
   region: eu-west-1
   runtime: python3.7
   memorySize: 128
+  stage: dev
   environment: 
-    ENVIRONMENT: ${opt:stage}
-    TELEGRAM_CFPLAND_CHANNEL: ${self:custom.TELEGRAM_CFPLAND_CHANNEL.${opt:stage}}
+    ENVIRONMENT: ${self:custom.stage}
+    TELEGRAM_CFPLAND_CHANNEL: ${self:custom.TELEGRAM_CFPLAND_CHANNEL.${self:custom.stage}}
 
   iamRoleStatements:
     - Effect: 'Allow'
@@ -39,7 +38,7 @@ provider:
       Resource: 'arn:aws:ssm:${self:provider.region}:*:parameter/CFPLAND/*'
     - Effect: 'Allow'
       Action: 'kms:Decrypt'
-      Resource: 'arn:aws:kms:${self:provider.region}:*:key/${self:custom.KMS_KEY_ID.${opt:stage}}'
+      Resource: 'arn:aws:kms:${self:provider.region}:*:key/${self:custom.KMS_KEY_ID.${self:custom.stage}}'
 
 functions:
   parse: 
