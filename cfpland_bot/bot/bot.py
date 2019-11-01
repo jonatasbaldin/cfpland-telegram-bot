@@ -55,8 +55,7 @@ class TelegramBot:
             f'💅  *Perks:* {item.perk_list}\n'
             f'🗓  *Conference Date:* {item.event_start_date}\n'
             f'🌍  *Location:* {item.location}\n'
-            f'⚡️  [Click here to send your talk!]({item.link})\n\n'
-            f'–––––––––––––––––––––––––––––––––––'
+            f'⚡️  [Click here to send your talk!]({item.link})\n'
         )
 
     def set_webhook(self, url):
